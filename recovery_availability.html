@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Recovery & Availability - VANET OLSR Simulator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><span class="header-icon">⏱️</span> Node Recovery Time & Network Availability</h1>
+    <p class="subtitle">Comprehensive performance analysis of protocol recovery mechanisms</p>
+</div>
+
+<div class="metrics-intro">
+    <div class="intro-card">
+        <span class="intro-icon">⏱️</span>
+        <p><strong>Node Recovery Time:</strong> Time required (in milliseconds) to restore routing functionality after a node failure. Lower is better.</p>
+    </div>
+    <div class="intro-card">
+        <span class="intro-icon">📶</span>
+        <p><strong>Network Availability:</strong> Percentage of time the network maintains full connectivity and routing capability. Higher is better.</p>
+    </div>
+</div>
+
+<div class="refresh-control">
+    <button id="refreshMetrics" class="btn btn-primary">
+        <span class="btn-icon">🔄</span> Load Latest Results
+    </button>
+    <span class="refresh-note">Run a simulation first to see comparison data</span>
+</div>
+
+<div class="charts-container">
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <span class="chart-icon">⏱️</span>
+            <h3>Node Recovery Time (ms)</h3>
+        </div>
+        <div class="chart-box">
+            <canvas id="recoveryTimeChart"></canvas>
+        </div>
+        <div class="chart-description">
+            <p><strong>OLSR Advantage:</strong> Rapid topology updates through MPR flooding enable quick detection and recovery from node failures.</p>
+        </div>
+    </div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <span class="chart-icon">📶</span>
+            <h3>Network Availability (%)</h3>
+        </div>
+        <div class="chart-box">
+            <canvas id="availabilityChart"></canvas>
+        </div>
+        <div class="chart-description">
+            <p><strong>Key Insight:</strong> OLSR's proactive nature ensures routing tables are always up-to-date, maximizing network uptime.</p>
+        </div>
+    </div>
+</div>
+
+<div class="charts-container">
+    <div class="chart-wrapper full-width">
+        <div class="chart-header">
+            <span class="chart-icon">📊</span>
+            <h3>Combined Performance Metrics</h3>
+        </div>
+        <div class="chart-box">
+            <canvas id="combinedChart"></canvas>
+        </div>
+        <div class="chart-description">
+            <p><strong>Overall Analysis:</strong> OLSR consistently outperforms DSDV across all measured metrics, demonstrating its suitability for autonomous vehicle coordination networks.</p>
+        </div>
+    </div>
+</div>
+
+<div class="metrics-summary" id="metricsSummary" style="display: none;">
+    <h3><span class="summary-icon">📋</span> Detailed Performance Metrics</h3>
+    <div class="summary-grid four-cols">
+        <div class="summary-card olsr-summary">
+            <div class="card-header">
+                <span class="protocol-icon">🚀</span>
+                <span class="protocol-name">OLSR Recovery</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="olsrRecoveryTime">-</span>
+                <span class="metric-unit">ms</span>
+            </div>
+            <div class="metric-label">Recovery Time</div>
+            <div class="metric-status good">✅ Fast</div>
+        </div>
+        
+        <div class="summary-card dsdv-summary">
+            <div class="card-header">
+                <span class="protocol-icon">🐢</span>
+                <span class="protocol-name">DSDV Recovery</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="dsdvRecoveryTime">-</span>
+                <span class="metric-unit">ms</span>
+            </div>
+            <div class="metric-label">Recovery Time</div>
+            <div class="metric-status poor">⚠️ Slow</div>
+        </div>
+        
+        <div class="summary-card olsr-summary">
+            <div class="card-header">
+                <span class="protocol-icon">🚀</span>
+                <span class="protocol-name">OLSR Availability</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="olsrAvailability">-</span>
+                <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-label">Network Availability</div>
+            <div class="metric-status good">✅ Excellent</div>
+        </div>
+        
+        <div class="summary-card dsdv-summary">
+            <div class="card-header">
+                <span class="protocol-icon">🐢</span>
+                <span class="protocol-name">DSDV Availability</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="dsdvAvailability">-</span>
+                <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-label">Network Availability</div>
+            <div class="metric-status poor">⚠️ Low</div>
+        </div>
+    </div>
+    
+    <div class="improvement-banner">
+        <div class="improvement-item">
+            <span class="improvement-icon">⚡</span>
+            <span class="improvement-value" id="recoveryImprovement">-</span>
+            <span class="improvement-label">Faster Recovery</span>
+        </div>
+        <div class="improvement-item">
+            <span class="improvement-icon">📈</span>
+            <span class="improvement-value" id="availabilityImprovement">-</span>
+            <span class="improvement-label">Higher Availability</span>
+        </div>
+    </div>
+</div>
+
+<div class="technical-details">
+    <h3><span class="details-icon">🔬</span> Technical Analysis</h3>
+    <div class="details-grid">
+        <div class="detail-card">
+            <h4><span class="detail-icon">🔄</span> OLSR Recovery Mechanism</h4>
+            <ul>
+                <li>Periodic HELLO messages detect link failures within 2-3 intervals</li>
+                <li>TC (Topology Control) messages propagate updates via MPRs</li>
+                <li>Shortest Path First calculation provides optimal routes instantly</li>
+                <li>No route discovery delay - routes always available</li>
+            </ul>
+        </div>
+        <div class="detail-card">
+            <h4><span class="detail-icon">📊</span> DSDV Recovery Mechanism</h4>
+            <ul>
+                <li>Full routing table broadcasts required for updates</li>
+                <li>Sequence number propagation delays route convergence</li>
+                <li>Incremental updates may miss critical changes</li>
+                <li>Higher overhead during network instability</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recovery_availability.js') }}"></script>
+{% endblock %}

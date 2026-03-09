@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Results History - VANET OLSR Simulator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><span class="header-icon">📊</span> Simulation Results History</h1>
+    <p class="subtitle">View and analyze all past simulation runs stored in TinyDB</p>
+</div>
+
+<div class="results-controls">
+    <div class="control-info">
+        <span class="info-icon">💾</span>
+        <span>All results are persistently stored in TinyDB database</span>
+    </div>
+    <button id="clearResults" class="btn btn-danger">
+        <span class="btn-icon">🗑️</span> Clear All Results
+    </button>
+</div>
+
+{% if results %}
+<div class="results-summary">
+    <div class="summary-stat">
+        <span class="stat-icon">📝</span>
+        <span class="stat-value">{{ results|length }}</span>
+        <span class="stat-label">Total Simulations</span>
+    </div>
+</div>
+
+<div class="results-table-container">
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th><span class="th-icon">🕐</span> Timestamp</th>
+                <th><span class="th-icon">🚗</span> Nodes</th>
+                <th><span class="th-icon">🟢</span> Source</th>
+                <th><span class="th-icon">🔴</span> Dest</th>
+                <th><span class="th-icon">🚀</span> OLSR Hops</th>
+                <th><span class="th-icon">🐢</span> DSDV Hops</th>
+                <th><span class="th-icon">🛡️</span> OLSR FTR</th>
+                <th><span class="th-icon">🛡️</span> DSDV FTR</th>
+                <th><span class="th-icon">⏱️</span> OLSR Recovery</th>
+                <th><span class="th-icon">⏱️</span> DSDV Recovery</th>
+                <th><span class="th-icon">📶</span> OLSR Avail</th>
+                <th><span class="th-icon">📶</span> DSDV Avail</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results|reverse %}
+            <tr>
+                <td>{{ result.timestamp[:19] }}</td>
+                <td>{{ result.num_nodes }}</td>
+                <td class="source-cell">{{ result.source }}</td>
+                <td class="dest-cell">{{ result.destination }}</td>
+                <td class="olsr-cell">{{ result.metrics.olsr.path_length }}</td>
+                <td class="dsdv-cell">{{ result.metrics.dsdv.path_length }}</td>
+                <td class="olsr-cell">{{ result.metrics.olsr.fault_tolerance_rate }}%</td>
+                <td class="dsdv-cell">{{ result.metrics.dsdv.fault_tolerance_rate }}%</td>
+                <td class="olsr-cell">{{ result.metrics.olsr.node_recovery_time }}ms</td>
+                <td class="dsdv-cell">{{ result.metrics.dsdv.node_recovery_time }}ms</td>
+                <td class="olsr-cell">{{ result.metrics.olsr.network_availability }}%</td>
+                <td class="dsdv-cell">{{ result.metrics.dsdv.network_availability }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="history-charts">
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <span class="chart-icon">📈</span>
+            <h3>Performance Trends Over Simulations</h3>
+        </div>
+        <div class="chart-box">
+            <canvas id="trendsChart"></canvas>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="no-results">
+    <div class="no-results-icon">📭</div>
+    <h3>No Simulation Results Yet</h3>
+    <p>Run a simulation from the <a href="/simulation">Path Simulation</a> page to see results here.</p>
+    <a href="/simulation" class="btn btn-primary">
+        <span class="btn-icon">🔄</span> Go to Simulation
+    </a>
+</div>
+{% endif %}
+
+<div class="database-info">
+    <h3><span class="db-icon">💾</span> TinyDB Storage Information</h3>
+    <div class="db-details">
+        <div class="db-item">
+            <span class="item-icon">📁</span>
+            <span class="item-label">Database File:</span>
+            <span class="item-value">simulation_db.json</span>
+        </div>
+        <div class="db-item">
+            <span class="item-icon">📊</span>
+            <span class="item-label">Tables:</span>
+            <span class="item-value">simulations, results</span>
+        </div>
+        <div class="db-item">
+            <span class="item-icon">🔒</span>
+            <span class="item-label">Storage:</span>
+            <span class="item-value">Persistent JSON-based storage</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('clearResults')?.addEventListener('click', async function() {
+    if (confirm('Are you sure you want to clear all simulation results?')) {
+        const response = await fetch('/api/clear-results', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+            location.reload();
+        }
+    }
+});
+
+const resultsData = {{ results|tojson|safe if results else '[]' }};
+if (resultsData.length > 0) {
+    const ctx = document.getElementById('trendsChart')?.getContext('2d');
+    if (ctx) {
+        const labels = resultsData.map((r, i) => `Sim ${i + 1}`);
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'OLSR Fault Tolerance (%)',
+                        data: resultsData.map(r => r.metrics.olsr.fault_tolerance_rate),
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'DSDV Fault Tolerance (%)',
+                        data: resultsData.map(r => r.metrics.dsdv.fault_tolerance_rate),
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                }
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

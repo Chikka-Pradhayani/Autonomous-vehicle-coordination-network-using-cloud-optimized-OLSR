@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VANET OLSR Simulator{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="nav-icon">🚗</span>
+            <span class="nav-title">VANET OLSR Simulator</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="{% if request.endpoint == 'home' %}active{% endif %}">
+                <span class="link-icon">🌐</span> Network Topology
+            </a></li>
+            <li><a href="/simulation" class="{% if request.endpoint == 'simulation' %}active{% endif %}">
+                <span class="link-icon">🔄</span> Path Simulation
+            </a></li>
+            <li><a href="/fault-tolerance" class="{% if request.endpoint == 'fault_tolerance' %}active{% endif %}">
+                <span class="link-icon">🛡️</span> Fault Tolerance
+            </a></li>
+            <li><a href="/recovery-availability" class="{% if request.endpoint == 'recovery_availability' %}active{% endif %}">
+                <span class="link-icon">⏱️</span> Recovery & Availability
+            </a></li>
+            <li><a href="/results" class="{% if request.endpoint == 'results' %}active{% endif %}">
+                <span class="link-icon">📊</span> Results History
+            </a></li>
+        </ul>
+    </nav>
+    
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-icon">📡</span>
+            <span>Autonomous Vehicle Coordination Network - OLSR vs DSDV Protocol Comparison</span>
+            <span class="footer-icon">🚙</span>
+        </div>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

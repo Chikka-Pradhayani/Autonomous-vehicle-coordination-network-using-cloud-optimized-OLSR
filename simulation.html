@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Path Simulation - VANET OLSR Simulator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><span class="header-icon">🔄</span> Path Finding Simulation</h1>
+    <p class="subtitle">Compare OLSR vs DSDV routing paths between source and destination</p>
+</div>
+
+<div class="simulation-controls">
+    <div class="control-row">
+        <div class="control-group">
+            <label for="numNodesSimulation">
+                <span class="control-icon">🚗</span> Number of Nodes:
+            </label>
+            <input type="number" id="numNodesSimulation" min="10" max="200" value="100" class="input-field">
+        </div>
+        <button id="generateNetworkBtn" class="btn btn-secondary">
+            <span class="btn-icon">⚡</span> Generate Network
+        </button>
+    </div>
+    
+    <div class="control-row" id="pathControls" style="display: none;">
+        <div class="control-group">
+            <label for="sourceNode">
+                <span class="control-icon">🟢</span> Source Node:
+            </label>
+            <input type="number" id="sourceNode" min="0" value="20" class="input-field">
+        </div>
+        <div class="control-group">
+            <label for="destNode">
+                <span class="control-icon">🔴</span> Destination Node:
+            </label>
+            <input type="number" id="destNode" min="0" value="40" class="input-field">
+        </div>
+        <button id="findPathBtn" class="btn btn-primary">
+            <span class="btn-icon">🔍</span> Find Paths
+        </button>
+    </div>
+</div>
+
+<div class="simulation-container">
+    <div class="canvas-wrapper">
+        <div class="canvas-header">
+            <span class="canvas-icon">📡</span>
+            <span>Network with Path Visualization</span>
+        </div>
+        <canvas id="simulationCanvas" width="900" height="550"></canvas>
+        <div class="canvas-legend">
+            <div class="legend-item">
+                <span class="legend-dot source-dot"></span>
+                <span>Source Node</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dest-dot"></span>
+                <span>Destination Node</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-line olsr-line"></span>
+                <span>OLSR Path (Shortest)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-line dsdv-line"></span>
+                <span>DSDV Path (Longer)</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="results-panel" id="resultsPanel" style="display: none;">
+        <h3><span class="results-icon">📊</span> Path Comparison Results</h3>
+        
+        <div class="path-result olsr-result">
+            <div class="result-header">
+                <span class="protocol-badge olsr-badge">OLSR</span>
+                <span class="result-label">Proposed Protocol (Optimal)</span>
+            </div>
+            <div class="result-details">
+                <div class="result-item">
+                    <span class="item-icon">📏</span>
+                    <span class="item-label">Path Length:</span>
+                    <span class="item-value" id="olsrPathLength">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="item-icon">⚖️</span>
+                    <span class="item-label">Total Weight:</span>
+                    <span class="item-value" id="olsrWeight">-</span>
+                </div>
+                <div class="result-item path-nodes">
+                    <span class="item-icon">🛣️</span>
+                    <span class="item-label">Path:</span>
+                    <span class="item-value" id="olsrPath">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="path-result dsdv-result">
+            <div class="result-header">
+                <span class="protocol-badge dsdv-badge">DSDV</span>
+                <span class="result-label">Existing Protocol (Low Performance)</span>
+            </div>
+            <div class="result-details">
+                <div class="result-item">
+                    <span class="item-icon">📏</span>
+                    <span class="item-label">Path Length:</span>
+                    <span class="item-value" id="dsdvPathLength">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="item-icon">⚖️</span>
+                    <span class="item-label">Total Weight:</span>
+                    <span class="item-value" id="dsdvWeight">-</span>
+                </div>
+                <div class="result-item path-nodes">
+                    <span class="item-icon">🛣️</span>
+                    <span class="item-label">Path:</span>
+                    <span class="item-value" id="dsdvPath">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="comparison-summary">
+            <h4><span class="summary-icon">📈</span> Performance Improvement</h4>
+            <div class="improvement-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="pathImprovement">-</span>
+                    <span class="stat-label">Fewer Hops</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="weightImprovement">-</span>
+                    <span class="stat-label">Weight Reduction</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/simulation.js') }}"></script>
+{% endblock %}

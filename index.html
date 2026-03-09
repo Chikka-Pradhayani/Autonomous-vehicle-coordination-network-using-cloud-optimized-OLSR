@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Network Topology - VANET OLSR Simulator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><span class="header-icon">🌐</span> Network Topology Canvas</h1>
+    <p class="subtitle">Generate and visualize autonomous vehicle coordination network</p>
+</div>
+
+<div class="control-panel">
+    <div class="control-group">
+        <label for="numNodes">
+            <span class="control-icon">🚗</span> Number of Nodes (Vehicles):
+        </label>
+        <input type="number" id="numNodes" min="10" max="200" value="100" class="input-field">
+    </div>
+    <button id="generateBtn" class="btn btn-primary">
+        <span class="btn-icon">⚡</span> Generate Network
+    </button>
+</div>
+
+<div class="network-info" id="networkInfo" style="display: none;">
+    <div class="info-card">
+        <span class="info-icon">🚗</span>
+        <span class="info-label">Total Nodes:</span>
+        <span class="info-value" id="totalNodes">0</span>
+    </div>
+    <div class="info-card">
+        <span class="info-icon">🔗</span>
+        <span class="info-label">Total Connections:</span>
+        <span class="info-value" id="totalEdges">0</span>
+    </div>
+    <div class="info-card">
+        <span class="info-icon">📡</span>
+        <span class="info-label">Transmission Range:</span>
+        <span class="info-value">150m</span>
+    </div>
+</div>
+
+<div class="canvas-container">
+    <div class="canvas-header">
+        <span class="canvas-icon">📡</span>
+        <span>Vehicle Network Topology</span>
+    </div>
+    <canvas id="networkCanvas" width="900" height="600"></canvas>
+    <div class="canvas-legend">
+        <div class="legend-item">
+            <span class="legend-dot node-dot"></span>
+            <span>Vehicle Node</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-line"></span>
+            <span>Communication Link</span>
+        </div>
+    </div>
+</div>
+
+<div class="protocol-info">
+    <div class="protocol-card olsr-card">
+        <h3><span class="protocol-icon">🚀</span> OLSR Protocol (Proposed)</h3>
+        <p>Optimized Link State Routing - Proactive protocol with MPR optimization for efficient route discovery and topology dissemination.</p>
+        <ul>
+            <li>✅ Fast convergence</li>
+            <li>✅ Low overhead with MPR selection</li>
+            <li>✅ Optimal path selection</li>
+        </ul>
+    </div>
+    <div class="protocol-card dsdv-card">
+        <h3><span class="protocol-icon">🐢</span> DSDV Protocol (Existing)</h3>
+        <p>Destination-Sequenced Distance Vector - Table-driven protocol with sequence numbers for loop prevention.</p>
+        <ul>
+            <li>❌ Higher routing overhead</li>
+            <li>❌ Slower convergence</li>
+            <li>❌ Suboptimal paths</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/network.js') }}"></script>
+{% endblock %}

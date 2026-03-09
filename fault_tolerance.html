@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Fault Tolerance - VANET OLSR Simulator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><span class="header-icon">🛡️</span> Fault Tolerance Rate Comparison</h1>
+    <p class="subtitle">Comparing network resilience between OLSR and DSDV protocols</p>
+</div>
+
+<div class="metrics-intro">
+    <div class="intro-card">
+        <span class="intro-icon">📊</span>
+        <p>Fault Tolerance Rate measures the network's ability to maintain connectivity and routing functionality when nodes fail or links break. Higher values indicate better resilience.</p>
+    </div>
+</div>
+
+<div class="refresh-control">
+    <button id="refreshMetrics" class="btn btn-primary">
+        <span class="btn-icon">🔄</span> Load Latest Results
+    </button>
+    <span class="refresh-note">Run a simulation first to see comparison data</span>
+</div>
+
+<div class="charts-container">
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <span class="chart-icon">📈</span>
+            <h3>Fault Tolerance Rate (%)</h3>
+        </div>
+        <div class="chart-box">
+            <canvas id="faultToleranceChart"></canvas>
+        </div>
+        <div class="chart-description">
+            <p><strong>OLSR Advantage:</strong> Proactive topology maintenance with MPR optimization enables faster detection and recovery from node failures.</p>
+        </div>
+    </div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <span class="chart-icon">📊</span>
+            <h3>Fault Tolerance Breakdown</h3>
+        </div>
+        <div class="chart-box">
+            <canvas id="faultToleranceBarChart"></canvas>
+        </div>
+        <div class="chart-description">
+            <p><strong>Key Insight:</strong> OLSR's proactive link state updates ensure up-to-date routing tables, minimizing the impact of sudden node failures.</p>
+        </div>
+    </div>
+</div>
+
+<div class="metrics-summary" id="metricsSummary" style="display: none;">
+    <h3><span class="summary-icon">📋</span> Detailed Metrics</h3>
+    <div class="summary-grid">
+        <div class="summary-card olsr-summary">
+            <div class="card-header">
+                <span class="protocol-icon">🚀</span>
+                <span class="protocol-name">OLSR Protocol</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="olsrFaultTolerance">-</span>
+                <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-label">Fault Tolerance Rate</div>
+            <div class="metric-status good">✅ Excellent</div>
+        </div>
+        
+        <div class="summary-card dsdv-summary">
+            <div class="card-header">
+                <span class="protocol-icon">🐢</span>
+                <span class="protocol-name">DSDV Protocol</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="dsdvFaultTolerance">-</span>
+                <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-label">Fault Tolerance Rate</div>
+            <div class="metric-status poor">⚠️ Low Performance</div>
+        </div>
+        
+        <div class="summary-card improvement-summary">
+            <div class="card-header">
+                <span class="protocol-icon">📈</span>
+                <span class="protocol-name">Improvement</span>
+            </div>
+            <div class="metric-display">
+                <span class="metric-value" id="faultToleranceImprovement">-</span>
+                <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-label">OLSR Advantage</div>
+            <div class="metric-status excellent">🏆 Superior</div>
+        </div>
+    </div>
+</div>
+
+<div class="protocol-comparison">
+    <h3><span class="comparison-icon">⚖️</span> Why OLSR Outperforms DSDV in Fault Tolerance</h3>
+    <div class="comparison-grid">
+        <div class="comparison-item olsr-item">
+            <span class="item-icon">🔄</span>
+            <h4>Proactive Updates</h4>
+            <p>OLSR continuously maintains topology information through periodic HELLO and TC messages.</p>
+        </div>
+        <div class="comparison-item olsr-item">
+            <span class="item-icon">🎯</span>
+            <h4>MPR Optimization</h4>
+            <p>Multipoint Relays reduce overhead while ensuring reliable topology dissemination.</p>
+        </div>
+        <div class="comparison-item dsdv-item">
+            <span class="item-icon">⏳</span>
+            <h4>Slow Convergence</h4>
+            <p>DSDV requires full table exchanges, causing delays in failure detection.</p>
+        </div>
+        <div class="comparison-item dsdv-item">
+            <span class="item-icon">📋</span>
+            <h4>Higher Overhead</h4>
+            <p>DSDV's sequence number propagation creates significant network load during failures.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fault_tolerance.js') }}"></script>
+{% endblock %}
