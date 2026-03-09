@@ -1,0 +1,2 @@
+# Autonomous-vehicle-coordination-network-using-cloud-optimized-OLSR
+Autonomous Vehicle Coordination Network using cloud-Optimized OLSR for proactive topology dissemination. The system enables vehicle to communicate with each other and the cloud to share real-time traffic , location , and road condition data. This improves routing efficiency, vehicle coordination and road safety in intelligent transportation systems
